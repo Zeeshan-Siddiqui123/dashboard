@@ -1,4 +1,3 @@
-
 import React, { createContext, useState, useEffect } from 'react';
 
 // Create a context for user information
@@ -8,10 +7,14 @@ const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    // Retrieve user from localStorage if logged in
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
-    if (loggedInUser) {
-      setUser(loggedInUser);
+    try {
+      // Retrieve user from localStorage if logged in
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+      if (loggedInUser) {
+        setUser(loggedInUser);
+      }
+    } catch (error) {
+      console.error("Failed to parse user data from localStorage:", error);
     }
   }, []);
 

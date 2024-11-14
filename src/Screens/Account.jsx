@@ -2,7 +2,7 @@
 import React, { useState, useContext } from 'react';
 import { Modal } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from './UserContext';
+// import { UserContext } from './UserContext';
 
 const Account = () => {
   const [currState, setCurrState] = useState("Sign Up");
@@ -18,7 +18,7 @@ const Account = () => {
   const navigate = useNavigate();
 
   
-  const { handleLogin } = useContext(UserContext);
+//   const { handleLogin } = useContext(UserContext);
 
   
   const handleChange = (e) => {
@@ -142,7 +142,7 @@ const Account = () => {
               <>
                 <p className="text-sm">Don't have an account?</p>
                 <Link 
-                  to="/" 
+                  to="/account" 
                   onClick={() => setCurrState("Sign Up")} 
                   className="text-blue-500 cursor-pointer underline"
                 >
