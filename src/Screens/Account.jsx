@@ -137,7 +137,7 @@ const Account = () => {
             {currState === "Sign Up" ? "Create Account" : "Continue"}
           </button>
 
-          <div className="text-center mt-3">
+          <div className="text-center mt-4">
             {currState === 'Login' ? (
               <>
                 <p className="text-sm">Don't have an account?</p>
