@@ -3,10 +3,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Index from './Screens/Index'
 import Account from './Screens/Account'
 import Navbar from './Components/Header'
+import UserProvider from './Screens/UserContext'
 
 const App = () => {
   return (
     <div>
+      <UserProvider>
       <BrowserRouter>
       <Navbar/>
         <Routes>
@@ -15,6 +17,7 @@ const App = () => {
           <Route path='/' element={'Page Not Found'}/>
         </Routes>
       </BrowserRouter>
+      </UserProvider>
     </div>
   )
 }

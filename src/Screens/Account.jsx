@@ -1,45 +1,38 @@
-// src/Screens/Login.jsx
-import React, { useState, useContext } from 'react';
-import { Modal } from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-// import { UserContext } from './UserContext';
+import React, { useState, useContext } from "react";
+import { Modal } from "antd";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "./UserContext";
 
 const Account = () => {
   const [currState, setCurrState] = useState("Sign Up");
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-  });
+  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
   const [agree, setAgree] = useState(false);
   const [error, setError] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
   const navigate = useNavigate();
 
-  
-//   const { handleLogin } = useContext(UserContext);
+  const { handleLogin } = useContext(UserContext);
 
-  
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+    setError(""); // Clear error on input change
   };
 
-  
   const handleSubmit = (e) => {
     e.preventDefault();
 
-  
-    if (!formData.email || !formData.password || (currState === 'Sign Up' && !formData.name)) {
+    // Validation
+    if (!formData.email || !formData.password || (currState === "Sign Up" && !formData.name)) {
       setError("All fields are required");
       return;
     }
 
     if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      setError('Invalid email format');
+      setError("Invalid email format");
       return;
     }
 
@@ -53,47 +46,44 @@ const Account = () => {
       return;
     }
 
+    // Clear error and proceed
     setError("");
 
-    let users = JSON.parse(localStorage.getItem('users')) || [];
+    const users = JSON.parse(localStorage.getItem("users")) || [];
 
     if (currState === "Sign Up") {
-      const userExists = users.some(user => user.email === formData.email);
-      if (userExists) {
+      if (users.some((user) => user.email === formData.email)) {
         setError("Email is already registered");
         return;
       }
 
+      // Save new user
       users.push(formData);
-      localStorage.setItem('users', JSON.stringify(users));
-      localStorage.setItem('loggedInUser', JSON.stringify(formData));
-      handleLogin(formData); // Update global user state
+      localStorage.setItem("users", JSON.stringify(users));
+      localStorage.setItem("loggedInUser", JSON.stringify(formData));
+      handleLogin(formData);
       setModalMessage("Account Created Successfully");
-      setModalVisible(true);
-      setFormData({ name: '', email: '', password: '' }); // Clear form inputs
-      setAgree(false); // Reset agreement checkbox
-      navigate('/');
-    }
+    } else {
+      const user = users.find((user) => user.email === formData.email && user.password === formData.password);
 
-    if (currState === "Login") {
-      const storedUser = users.find(user => user.email === formData.email && user.password === formData.password);
-      if (storedUser) {
-        localStorage.setItem('loggedInUser', JSON.stringify(storedUser));
-        handleLogin(storedUser); // Update global user state
+      if (user) {
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+        handleLogin(user);
         setModalMessage("Login Successful");
-        setModalVisible(true);
-        setFormData({ name: '', email: '', password: '' }); // Clear form inputs
-        navigate('/');
       } else {
         setError("Invalid email or password");
         return;
       }
     }
+
+    setModalVisible(true);
+    setFormData({ name: "", email: "", password: "" });
+    setAgree(false);
   };
 
   const handleModalClose = () => {
     setModalVisible(false);
-    navigate('/'); // Optionally, navigate after modal closes
+    navigate("/"); // Navigate to home after modal close
   };
 
   return (
@@ -102,7 +92,7 @@ const Account = () => {
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-lg p-8 w-11/12 max-w-md">
           <h1 className="text-2xl font-bold mb-6 text-center">{currState}</h1>
           <div className="space-y-4">
-            {currState === 'Sign Up' && (
+            {currState === "Sign Up" && (
               <input
                 type="text"
                 name="name"
@@ -130,50 +120,51 @@ const Account = () => {
             />
           </div>
           {error && <p className="text-red-500 mt-4 text-center">{error}</p>}
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="w-full mt-6 bg-blue-500 text-white py-3 rounded-md hover:bg-blue-600 transition duration-200"
           >
             {currState === "Sign Up" ? "Create Account" : "Continue"}
           </button>
 
           <div className="text-center mt-4">
-            {currState === 'Login' ? (
+            {currState === "Login" ? (
               <>
                 <p className="text-sm">Don't have an account?</p>
-                <Link 
-                  to="/account" 
-                  onClick={() => setCurrState("Sign Up")} 
+                <button
+                  type="button"
+                  onClick={() => setCurrState("Sign Up")}
                   className="text-blue-500 cursor-pointer underline"
                 >
                   Sign Up
-                </Link>
+                </button>
               </>
             ) : (
               <>
                 <p className="text-sm">Already have an account?</p>
-                <Link 
-                  to="/account" 
-                  onClick={() => setCurrState("Login")} 
+                <button
+                  type="button"
+                  onClick={() => setCurrState("Login")}
                   className="text-blue-500 cursor-pointer underline"
                 >
                   Login
-                </Link>
+                </button>
               </>
             )}
           </div>
 
-          {currState === 'Sign Up' && (
+          {currState === "Sign Up" && (
             <div className="flex items-center mt-4">
-              <input 
-                type="checkbox" 
-                id="agree" 
+              <input
+                type="checkbox"
+                id="agree"
                 checked={agree}
-                onChange={() => setAgree(!agree)} 
+                onChange={() => setAgree(!agree)}
                 className="mr-2 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label htmlFor="agree" className="text-sm">
-                I agree to the <Link className="text-blue-500 underline">terms of use</Link> & <Link  className="text-blue-500 underline">privacy policy</Link>
+                I agree to the <Link className="text-blue-500 underline">terms of use</Link> &{" "}
+                <Link className="text-blue-500 underline">privacy policy</Link>
               </label>
             </div>
           )}
@@ -185,7 +176,7 @@ const Account = () => {
         open={modalVisible}
         onOk={handleModalClose}
         onCancel={handleModalClose}
-        cancelButtonProps={{ style: { display: 'none' } }}
+        cancelButtonProps={{ style: { display: "none" } }}
       >
         <p>{modalMessage}</p>
       </Modal>
