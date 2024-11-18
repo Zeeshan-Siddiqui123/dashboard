@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Modal, Input, Button, Upload, Table } from "antd";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
 
+
 const Index = () => {
+
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -115,7 +117,9 @@ const Index = () => {
   ];
 
   return (
+    
     <div className="p-5 bg-gray-100 min-h-screen">
+
       {/* Action Buttons */}
       <div className="flex justify-between mb-5">
         <Button

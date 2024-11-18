@@ -17,14 +17,14 @@ const Navbar = () => {
         <NavLink
           to="/"
           className={({ isActive }) =>
-            isActive ? 'text-[#f97070] underline font-bold' : 'text-white font-bold'
+            isActive ? 'bg-red-500 px-4 py-2 rounded-md text-orange-300' : "bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold"
           }
         >
           Home
         </NavLink>
         {user ? (
           <>
-            <span className="text-white font-semibold">{`Hello, ${user.name}`}</span>
+            <span className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold">{`Hello, ${user.name}`}</span>
             <button
               onClick={handleLogout}
               className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold"
@@ -33,7 +33,7 @@ const Navbar = () => {
             </button>
           </>
         ) : (
-          <Link to="/account" className="text-blue-200 font-semibold">
+          <Link to="/account" className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold">
             <b>Log in/Sign Up</b>
           </Link>
         )}
