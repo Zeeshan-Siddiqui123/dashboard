@@ -135,7 +135,7 @@ const Index = () => {
   ];
 
   return (
-    <div className="p-5 bg-gray-100 min-h-screen max-w-screen-lg mx-auto">
+    <div className="p-5 bg-gray-100 w-full mx-auto">
       <div className="flex flex-wrap justify-between gap-3 mb-5">
         <Button
           type="primary"

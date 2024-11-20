@@ -13,10 +13,10 @@ const Navbar = () => {
     <nav className="navbar flex justify-between items-center p-4 bg-blue-500 text-white shadow-lg">
       <div className="main-name flex items-center gap-2">
         <FaShopify color="white" size="30" />
-        <h1 className="text-xl font-bold">Best Store</h1>
+        <h1 className="text-xl font-bold">CRUD</h1>
       </div>
 
-      <div className="nav-links flex gap-6">
+      <div className="nav-links flex gap-2">
         <NavLink
           to="/"
           className={({ isActive }) =>
