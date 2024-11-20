@@ -6,6 +6,9 @@ import { UserContext } from '../Screens/UserContext';
 const Navbar = () => {
   const { user, handleLogout } = useContext(UserContext); // Accessing user from context
 
+  // Extract the first letter of the user's first name
+  const firstName = user ? user.name.split(" ")[0] : ""; // Get the first word (first name)
+
   return (
     <nav className="navbar flex justify-between items-center p-4 bg-blue-500 text-white shadow-lg">
       <div className="main-name flex items-center gap-2">
@@ -22,9 +25,17 @@ const Navbar = () => {
         >
           Home
         </NavLink>
+
         {user ? (
           <>
-            <span className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold">{`Hello, ${user.name}`}</span>
+            <div className="flex items-center gap-2">
+              {/* Display the user's first letter inside a circle */}
+              <div className="w-10 h-10 bg-red-500 text-white rounded-full flex items-center justify-center text-lg font-semibold">
+                {firstName[0]}
+              </div>
+              {/* Optionally show the full name next to the avatar */}
+              {/* <span className="font-semibold">{firstName}</span> */}
+            </div>
             <button
               onClick={handleLogout}
               className="bg-red-500 px-4 py-2 rounded-md hover:bg-red-600 font-semibold"

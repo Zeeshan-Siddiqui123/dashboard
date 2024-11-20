@@ -1,10 +1,11 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Modal, Input, Button, Upload, Table } from "antd";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
-
+import { UserContext } from "./UserContext"; // Import UserContext
+import { Navigate, useNavigate } from "react-router-dom";
 
 const Index = () => {
-
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -15,15 +16,39 @@ const Index = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editIndex, setEditIndex] = useState(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  // Input Change Handler
+  const { user } = useContext(UserContext); // Access logged-in user
+
+  useEffect(() => {
+    const storedProducts = localStorage.getItem("products");
+    if (storedProducts) {
+      setProducts(JSON.parse(storedProducts));
+    }
+    setIsLoaded(true);
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("products", JSON.stringify(products));
+    }
+  }, [products, isLoaded]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  // Create or Update Product
   const handleCreateProduct = () => {
+    // Check if user is logged in
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedInUser'));
+  
+    if (!loggedInUser) {
+      // If not logged in, navigate to the login page
+      Navigate('/account');
+      return;
+    }
+  
     if (isEditing) {
       const updatedProducts = [...products];
       updatedProducts[editIndex] = formData;
@@ -35,8 +60,8 @@ const Index = () => {
     setFormData({ name: "", price: "", description: "", image: "" });
     setIsModalOpen(false);
   };
+  
 
-  // Edit Product
   const handleEditProduct = (index) => {
     const product = products.find((_, i) => i === index);
     setFormData(product);
@@ -45,7 +70,6 @@ const Index = () => {
     setIsModalOpen(true);
   };
 
-  // Delete Product with Confirmation Modal
   const handleDeleteProduct = (index) => {
     Modal.confirm({
       title: "Are you sure you want to delete this product?",
@@ -56,7 +80,6 @@ const Index = () => {
     });
   };
 
-  // Delete All Products with Confirmation Modal
   const handleDeleteAll = () => {
     Modal.confirm({
       title: "Are you sure you want to delete all products?",
@@ -64,7 +87,6 @@ const Index = () => {
     });
   };
 
-  // Columns for Table
   const columns = [
     {
       title: "Image",
@@ -96,38 +118,48 @@ const Index = () => {
       title: "Actions",
       key: "actions",
       render: (_, record, index) => (
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             icon={<FaEdit />}
             onClick={() => handleEditProduct(index)}
             className="bg-blue-500 text-white hover:bg-blue-600"
-          >
-            Edit
-          </Button>
+          ></Button>
           <Button
             icon={<FaTrash />}
             onClick={() => handleDeleteProduct(index)}
             className="bg-red-500 text-white hover:bg-red-600"
-          >
-            Delete
-          </Button>
+          ></Button>
         </div>
       ),
     },
   ];
 
   return (
-    
-    <div className="p-5 bg-gray-100 min-h-screen">
-
-      {/* Action Buttons */}
-      <div className="flex justify-between mb-5">
+    <div className="p-5 bg-gray-100 min-h-screen max-w-screen-lg mx-auto">
+      <div className="flex flex-wrap justify-between gap-3 mb-5">
         <Button
           type="primary"
           icon={<FaPlus />}
-          onClick={() => setIsModalOpen(true)}
-          className="bg-green-500 text-white flex items-center gap-2 hover:bg-green-600"
-        >
+          onClick={() => {
+            if (user) {
+              setIsModalOpen(true);
+            } else {
+              Modal.warning({
+                title: "Login Required",
+                content: "Please log in to create a product.",
+                onOk: () => {
+                  navigate("/account"); // Navigate to the login page
+                },
+              });
+            // onOk={Navigate('/account')}
+              
+            }
+          }}
+          className={`${
+            user ? "bg-green-500 hover:bg-green-600" : "bg-gray-400 cursor-not-allowed"
+          } text-white flex items-center gap-2`}
+          // disabled={!user}
+        > 
           Create Product
         </Button>
         <Button
@@ -141,7 +173,6 @@ const Index = () => {
         </Button>
       </div>
 
-      {/* Modal for Creating/Editing Product */}
       <Modal
         title={isEditing ? "Edit Product" : "Create Product"}
         open={isModalOpen}
@@ -183,15 +214,16 @@ const Index = () => {
         </div>
       </Modal>
 
-      {/* Product Table */}
-      <Table
-        dataSource={products}
-        columns={columns}
-        bordered
-        pagination={{ pageSize: 4 }}
-        rowKey={(record) => record.key}
-        className="bg-white rounded-lg shadow"
-      />
+      <div className="overflow-x-auto">
+        <Table
+          dataSource={products}
+          columns={columns}
+          bordered
+          pagination={{ pageSize: 4 }}
+          rowKey={(record) => record.key}
+          className="bg-white rounded-lg shadow"
+        />
+      </div>
     </div>
   );
 };
